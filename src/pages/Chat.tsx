@@ -1,5 +1,6 @@
+'use client'
 import React, { useState } from 'react';
-import useStore from '../store';
+import useStore from '../store/store';
 
 const Chat: React.FC = () => {
   const messages = useStore((state) => state.messages);

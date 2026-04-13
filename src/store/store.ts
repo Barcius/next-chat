@@ -1,23 +1,51 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
+
+interface Message {
+  id: string;
+  text: string;
+}
 
 interface State {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
+  messages: Message[];
+  addMessage: (text: string) => void;
+  editMessage: (id: string, text: string) => void;
+  deleteMessage: (id: string) => void;
 }
 
 const useStore = create<State>()(persist(
   (set) => ({
-    count: 0,
-    increment: () => set((state) => ({ count: state.count + 1 })),
-    decrement: () => set((state) => ({ count: state.count - 1 })),
+    messages: [],
+    addMessage: (text) => {
+      const newMessage = { id: Date.now().toString(), text };
+      set((state) => {
+        const newMessages = [...state.messages, newMessage];
+        localStorage.setItem('messages', JSON.stringify(newMessages));
+        return { messages: newMessages };
+      });
+    },
+    editMessage: (id, text) => {
+      set((state) => {
+        const newMessages = state.messages.map((message) =>
+          message.id === id ? { ...message, text } : message
+        );
+        localStorage.setItem('messages', JSON.stringify(newMessages));
+        return { messages: newMessages };
+      });
+    },
+    deleteMessage: (id) => {
+      set((state) => {
+        const newMessages = state.messages.filter((message) => message.id !== id);
+        localStorage.setItem('messages', JSON.stringify(newMessages));
+        return { messages: newMessages };
+      });
+    },
   }),
   {
     name: 'next-chat',
-    // storage: createJSONStorage(() => sessionStorage),
+    partialize: ({ messages }) => ({ messages })
   }
-)
-);
+));
 
 export default useStore;
+
