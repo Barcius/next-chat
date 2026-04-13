@@ -1,26 +1,51 @@
+import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface Message {
+export interface Message {
   id: string;
   text: string;
+  timeStamp: number;
+}
+
+export interface ContextMenuData {
+  messageId: string | null;
+  x: number;
+  y: number;
 }
 
 interface State {
   messages: Message[];
+  contextMenu: ContextMenuData;
+  editMessageId: string | null;
+  setEditMessageId: (id: string | null) => void;
+  setContextMenu: (data: ContextMenuData | null) => void;
   addMessage: (text: string) => void;
   editMessage: (id: string, text: string) => void;
   deleteMessage: (id: string) => void;
 }
 
+export const initContextMenuData: ContextMenuData = {
+  messageId: null,
+  x: 0,
+  y: 0,
+}
+
 const useStore = create<State>()(persist(
   (set) => ({
     messages: [],
+    contextMenu: initContextMenuData,
+    editMessageId: null,
+    setEditMessageId: (id) => {set({ editMessageId: id })},
+    setContextMenu: (data) => {set({ contextMenu: data || initContextMenuData })},
     addMessage: (text) => {
-      const newMessage = { id: Date.now().toString(), text };
+      const newMessage = {
+        id: nanoid(),
+        text,
+        timeStamp: Date.now(),
+      };
       set((state) => {
         const newMessages = [...state.messages, newMessage];
-        localStorage.setItem('messages', JSON.stringify(newMessages));
         return { messages: newMessages };
       });
     },
@@ -29,14 +54,12 @@ const useStore = create<State>()(persist(
         const newMessages = state.messages.map((message) =>
           message.id === id ? { ...message, text } : message
         );
-        localStorage.setItem('messages', JSON.stringify(newMessages));
         return { messages: newMessages };
       });
     },
     deleteMessage: (id) => {
       set((state) => {
         const newMessages = state.messages.filter((message) => message.id !== id);
-        localStorage.setItem('messages', JSON.stringify(newMessages));
         return { messages: newMessages };
       });
     },

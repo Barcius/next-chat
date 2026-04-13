@@ -1,79 +1,63 @@
 'use client'
-import React, { useState } from 'react';
-import useStore from '../store/store';
+import React, { useRef, useState } from 'react';
+import useStore, { initContextMenuData } from '../store/store';
+import MessagePane from '../widgets/messagePane';
+import ContextMenu from '../widgets/contextMenu/contextMenu';
 
 const Chat: React.FC = () => {
   const messages = useStore((state) => state.messages);
   const addMessage = useStore((state) => state.addMessage);
-  const editMessage = useStore((state) => state.editMessage);
-  const deleteMessage = useStore((state) => state.deleteMessage);
+  const setContextMenu = useStore((state) => state.setContextMenu);
+  
+  const newMessageInputRef = useRef<HTMLInputElement>(null);
 
-  const [newMessage, setNewMessage] = useState('');
-  const [editMessageId, setEditMessageId] = useState('');
-  const [editMessageText, setEditMessageText] = useState('');
+  React.useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  const handleOutsideClick = (e: MouseEvent) => {
+    const t = e.target as HTMLInputElement
+    if (!t.closest('.message-pane') && !t.closest('.context-menu')) {
+      setContextMenu(null);
+    }
+  };
 
   const handleAddMessage = () => {
-    if (newMessage.trim()) {
-      addMessage(newMessage);
-      setNewMessage('');
+    if (newMessageInputRef?.current) {
+      const val = newMessageInputRef.current.value.trim();
+      if (val) {
+        addMessage(val);
+        newMessageInputRef.current.value = '';
+      }
     }
-  };
-
-  const handleEditMessage = (id: string) => {
-    const message = messages.find((msg) => msg.id === id);
-    if (message) {
-      setEditMessageId(id);
-      setEditMessageText(message.text);
-    }
-  };
-
-  const handleSaveEdit = () => {
-    if (editMessageId && editMessageText.trim()) {
-      editMessage(editMessageId, editMessageText);
-      setEditMessageId('');
-      setEditMessageText('');
-    }
-  };
-
-  const handleDeleteMessage = (id: string) => {
-    deleteMessage(id);
   };
 
   return (
-    <div>
-      <h1>Chat</h1>
-      <div>
+    <>
+      <div className='flex-1 h-0'>
+          {messages.map((message) => (
+          <MessagePane
+            message={message}
+            key={message.id}
+          />
+          ))}
+      </div>
+      <div className='flex'>
         <input
+          className='flex-1 mr-2 p-2'
           type='text'
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          ref={newMessageInputRef}
           placeholder='Type a message'
         />
         <button onClick={handleAddMessage}>Send</button>
       </div>
-      {editMessageId && (
-        <div>
-          <input
-            type='text'
-            value={editMessageText}
-            onChange={(e) => setEditMessageText(e.target.value)}
-            placeholder='Edit message'
-          />
-          <button onClick={handleSaveEdit}>Save</button>
-          <button onClick={() => setEditMessageId('')}>Cancel</button>
-        </div>
-      )}
-      <ul>
-        {messages.map((message) => (
-          <li key={message.id}>
-            {message.text}
-            <button onClick={() => handleEditMessage(message.id)}>Edit</button>
-            <button onClick={() => handleDeleteMessage(message.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+      <ContextMenu />
+    </>
   );
 };
 
 export default Chat;
+
