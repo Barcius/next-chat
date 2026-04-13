@@ -25,7 +25,7 @@ interface State {
   deleteMessage: (id: string) => void;
 }
 
-export const initContextMenuData: ContextMenuData = {
+const initContextMenuData: ContextMenuData = {
   messageId: null,
   x: 0,
   y: 0,

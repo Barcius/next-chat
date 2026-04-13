@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import useStore, { Message } from '../../store/store';
+import useStore, { Message } from '../../shared/model/store/store';
+import ButtonedInput from '@/src/shared/ui/ButtonedInput/ButtonedInput';
 
 const MessagePane: React.FC<{ message: Message; }> = ({ message }) => {
   const setContextMenu = useStore((state) => state.setContextMenu);
@@ -20,15 +21,9 @@ const MessagePane: React.FC<{ message: Message; }> = ({ message }) => {
     });
   };
 
-  const handleEditMessage = () => {
-    if (editInputRef?.current) {
-      const val = editInputRef.current.value.trim();
-      if (val) {
-        editMessage(message.id, val);
-        editInputRef.current.value === '';
-        setEditMessageId(null);
-      }
-    }
+  const handleEditMessage = (val: string) => {
+      editMessage(message.id, val);
+      setEditMessageId(null);
   };
 
   const isEditing = editMessageId === message.id;
@@ -39,17 +34,22 @@ const MessagePane: React.FC<{ message: Message; }> = ({ message }) => {
       onContextMenu={handleContextMenu}
     >
       {isEditing ? (
-        <div className='flex'>
-          <input
-            className='flex-1 mr-2 p-2'
-            type='text'
-            ref={editInputRef}
-            placeholder='Type a message'
-            defaultValue={message.text}
-            autoFocus
-          />
-          <button onClick={handleEditMessage}>Save</button>
-        </div>
+        <ButtonedInput
+          buttonText='Save'
+          defaultInputValue={message.text}
+          onButtonClick={handleEditMessage}
+        />
+        // <div className='flex'>
+        //   <input
+        //     className='flex-1 mr-2 p-2'
+        //     type='text'
+        //     ref={editInputRef}
+        //     placeholder='Type a message'
+        //     defaultValue={message.text}
+        //     autoFocus
+        //   />
+        //   <button onClick={handleEditMessage}>Save</button>
+        // </div>
       ) : (
         <div>{message.text}</div>
       )}

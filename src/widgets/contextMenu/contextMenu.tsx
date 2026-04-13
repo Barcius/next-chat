@@ -1,4 +1,4 @@
-import useStore from '@/src/store/store';
+import useStore from '@/src/shared/model/store/store';
 import React from 'react';
 
 const ContextMenu: React.FC = () => {
