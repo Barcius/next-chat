@@ -1,28 +1,31 @@
 'use client'
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import useStore from '../shared/model/store/store';
 import MessagePane from '../widgets/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
 import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
 
-const Chat: React.FC = () => {
+const ChatPage: React.FC = () => {
   const messages = useStore((state) => state.messages);
   const addMessage = useStore((state) => state.addMessage);
   const setContextMenu = useStore((state) => state.setContextMenu);
+
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      const t = e.target as Element;
+      if (!t.closest('.message-pane') && !t.closest('.context-menu')) {
+        setContextMenu(null);
+      }
+    },
+    []
+  );
   
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, []);
-
-  const handleOutsideClick = (e: MouseEvent) => {
-    const t = e.target as HTMLInputElement
-    if (!t.closest('.message-pane') && !t.closest('.context-menu')) {
-      setContextMenu(null);
-    }
-  };
+  }, [handleOutsideClick]);
 
   return (
     <>
@@ -43,5 +46,5 @@ const Chat: React.FC = () => {
   );
 };
 
-export default Chat;
+export default ChatPage;
 
