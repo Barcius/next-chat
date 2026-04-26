@@ -1,21 +1,29 @@
 'use server';
-import api, { RqInitWithBody } from '@/src/shared/api';
-import { MessageID } from './messageApi.types';
+import api from '@/src/shared/api';
 import { Message } from '@/src/shared/model/store/store';
 import { nanoid } from 'nanoid';
 
-export const getMessages = async () => api.get('/posts');
-export const sendMessage = async (newMessage: string): Promise<Message | void> => {
-  const res = await api.post<Message>('/message', { body: newMessage });
-  // return res; // when real backend
-  console.log({ res });
-  if (res)
-    return {
-      id: nanoid(),
-      text: newMessage,
-      timeStamp: Date.now(),
-    };
+export const getMessages = async (signal: AbortSignal) => {
+  const res = await api.get<Message[]>('/messages', { signal });
+  return res;
 };
-export const editMessage = async (body: RqInitWithBody, id: MessageID) =>
-  api.patch(`/posts/${id}`, body);
-export const deleteMessage = async (id: MessageID) => api.delete(`/posts/${id}`);
+
+export const sendMessage = async (text: string): Promise<Message> => {
+  const newMessage: Message = {
+    id: nanoid(),
+    text,
+    timeStamp: Date.now(),
+  };
+  const res = await api.post<Message>('/messages', { body: JSON.stringify(newMessage) });
+  return res;
+};
+export const editMessage = async (id: string, text: string): Promise<Message> => {
+  const editedMessage: Pick<Message, 'text'> = { text };
+  const res = await api.patch<Message>(`/messages/${id}`, { body: JSON.stringify(editedMessage) });
+  return res;
+};
+export const deleteMessage = async (id: string): Promise<Message> => {
+  const res = await api.delete<Message>(`/messages/${id}`);
+  // console.log({ res });
+  return res;
+};

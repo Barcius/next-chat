@@ -1,7 +1,9 @@
-const BASE_URL = 'https://molaanus.lightboxapi.ru'; // 'https://jsonplaceholder.typicode.com';
-import handleError, { CustomError } from '../lib/error/error';
+// const BASE_URL = 'https://molaanus.lightboxapi.ru'; // 'https://jsonplaceholder.typicode.com';
+const BASE_URL = 'http://localhost:4000';
 
-export async function fetchBase<T>(path: string, options: RequestInit = {}): Promise<T | void> {
+import { getCustomFetchError, throwOnErrorResponse } from '../lib/error/error';
+
+export async function fetchBase<T>(path: string, options: RequestInit = {}): Promise<T> {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
       ...options,
@@ -11,13 +13,11 @@ export async function fetchBase<T>(path: string, options: RequestInit = {}): Pro
       },
     });
 
-    if (!res.ok) {
-      throw new CustomError(`Request failed: ${res.statusText}`, 'serverError', res.status);
-    }
+    debugger;
+    throwOnErrorResponse(res);
 
     return res.json();
   } catch (e) {
-    if (e instanceof Error && e.name === 'AbortError') return;
-    handleError(e instanceof Error ? new CustomError('Network error', 'networkError') : e);
+    throw getCustomFetchError(e);
   }
 }

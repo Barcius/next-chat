@@ -1,6 +1,4 @@
-import { nanoid } from 'nanoid';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface Message {
   id: string;
@@ -21,8 +19,8 @@ export interface State {
   setEditMessageId: (id: string | null) => void;
   setContextMenu: (data: ContextMenuData | null) => void;
   addMessage: (msg: Message) => void;
-  editMessage: (id: string, text: string) => void;
-  deleteMessage: (id: string) => void;
+  editMessage: (message: Message) => void;
+  deleteMessage: (id: Message) => void;
 }
 
 const initContextMenuData: ContextMenuData = {
@@ -31,44 +29,36 @@ const initContextMenuData: ContextMenuData = {
   y: 0,
 };
 
-const useStore = create<State>()(
-  persist(
-    (set) => ({
-      messages: [],
-      contextMenu: initContextMenuData,
-      editMessageId: null,
-      setEditMessageId: (id) => {
-        set({ editMessageId: id });
-      },
-      setContextMenu: (data) => {
-        set({ contextMenu: data || initContextMenuData });
-      },
-      addMessage: (newMessage) => {
-        set((state) => {
-          const newMessages = [...state.messages, newMessage];
-          return { messages: newMessages };
-        });
-      },
-      editMessage: (id, text) => {
-        set((state) => {
-          const newMessages = state.messages.map((message) =>
-            message.id === id ? { ...message, text } : message,
-          );
-          return { messages: newMessages };
-        });
-      },
-      deleteMessage: (id) => {
-        set((state) => {
-          const newMessages = state.messages.filter((message) => message.id !== id);
-          return { messages: newMessages };
-        });
-      },
-    }),
-    {
-      name: 'next-chat',
-      partialize: ({ messages }) => ({ messages }),
-    },
-  ),
-);
+const useStore = create<State>((set) => ({
+  messages: [],
+  contextMenu: initContextMenuData,
+  editMessageId: null,
+  setEditMessageId: (id) => {
+    set({ editMessageId: id });
+  },
+  setContextMenu: (data) => {
+    set({ contextMenu: data || initContextMenuData });
+  },
+  addMessage: (newMessage) => {
+    set((state) => {
+      const newMessages = [...state.messages, newMessage];
+      return { messages: newMessages };
+    });
+  },
+  editMessage: (newMsg) => {
+    set((state) => {
+      const newMessages = state.messages.map((message) =>
+        message.id === newMsg.id ? newMsg : message,
+      );
+      return { messages: newMessages };
+    });
+  },
+  deleteMessage: (delMsg) => {
+    set((state) => {
+      const newMessages = state.messages.filter((message) => message.id !== delMsg.id);
+      return { messages: newMessages };
+    });
+  },
+}));
 
 export default useStore;

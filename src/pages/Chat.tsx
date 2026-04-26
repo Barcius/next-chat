@@ -1,17 +1,23 @@
 'use client';
 import React, { useEffect, useCallback, useState } from 'react';
 import useStore from '../shared/model/store/store';
-import MessagePane from '../widgets/messagePane';
+import MessagePane from '../widgets/messagePane/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
 import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
 import { useShallow } from 'zustand/shallow';
-import { sendMessage } from '../entities/message/api/messageApi';
+import { sendMessage } from '@/src/entities/message/api/messageApi';
+import handleError, { getCustomFetchError, throwOnErrorResponse } from '../shared/lib/error/error';
+import { setMessages } from '../shared/model/store/actions';
 
 const ChatPage: React.FC = () => {
-  const { messages, addMessage, setContextMenu } = useStore(
+  const {
+    messages,
+    storeMessage: addMessage,
+    setContextMenu,
+  } = useStore(
     useShallow((store) => ({
       messages: store.messages,
-      addMessage: store.addMessage,
+      storeMessage: store.addMessage,
       setContextMenu: store.setContextMenu,
     })),
   );
@@ -28,11 +34,18 @@ const ChatPage: React.FC = () => {
   );
 
   const handleSendMessage = async (val: string) => {
-    if (isSending) return;
+    if (isSending) return false;
     setIsSending(true);
-    const res = await sendMessage(val);
-    if (res) addMessage(res);
+    let success = true;
+    try {
+      const res = await sendMessage(val);
+      addMessage(res);
+    } catch (e) {
+      handleError(e);
+      success = false;
+    }
     setIsSending(false);
+    return success;
   };
 
   useEffect(() => {
@@ -41,6 +54,22 @@ const ChatPage: React.FC = () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [handleOutsideClick]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch('/api/messages', { signal: controller.signal });
+        throwOnErrorResponse(res);
+        setMessages(await res.json());
+      } catch (e) {
+        handleError(getCustomFetchError(e));
+      }
+    })();
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   return (
     <>

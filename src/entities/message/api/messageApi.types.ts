@@ -1,1 +1,0 @@
-export type MessageID = number | string

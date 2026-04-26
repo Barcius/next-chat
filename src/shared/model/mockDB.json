@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "id": "Ekvt4WCuBRiG4bvvv7_ir",
+      "text": "asdfaf",
+      "timeStamp": 1777204664849
+    },
+    {
+      "id": "cSG9HFHMDA5K3THh2x3sv",
+      "text": "asdfff",
+      "timeStamp": 1777208233891
+    },
+    {
+      "id": "gYhczsIruM-oSuDUfjHSL",
+      "text": "asdff",
+      "timeStamp": 1777210156956
+    },
+    {
+      "id": "R360K0rSydk",
+      "text": "fffaf",
+      "timeStamp": 1777224136252
+    },
+    {
+      "id": "xcnj-GOO2fc",
+      "text": "basta",
+      "timeStamp": 1777224143643
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

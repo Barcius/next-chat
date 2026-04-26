@@ -7,7 +7,8 @@
     "dbg": "next dev --inspect",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db": "npx json-server -p 4000 ./src/shared/model/mockDB.json"
   },
   "dependencies": {
     "nanoid": "^5.1.7",
@@ -26,6 +27,7 @@
     "eslint-config-next": "^16.2.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "json-server": "^1.0.0-beta.15",
     "prettier": "^3.8.3",
     "tailwindcss": "^4",
     "typescript": "^5"

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 
 interface ButtonedInputProps {
   buttonText: string;
-  onButtonClick: (val: string) => void;
+  onButtonClick: (val: string) => Promise<boolean>;
   defaultInputValue?: string;
   disabled?: boolean;
 }
@@ -15,11 +15,13 @@ const ButtonedInput: React.FC<ButtonedInputProps> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (inputRef?.current) {
       const val = inputRef.current.value.trim();
-      if (val) onButtonClick(val);
-      inputRef.current.value = '';
+      if (val) {
+        const res = await onButtonClick(val);
+        if (res && inputRef.current) inputRef.current.value = '';
+      }
     }
   };
   return (

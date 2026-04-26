@@ -1,7 +1,7 @@
 import { fetchBase } from './fetchBase';
 import 'server-only';
 
-export type RqInitWithBody = Omit<RequestInit, 'method'> & { body: BodyInit };
+type RqInitWithBody = Omit<RequestInit, 'method'> & { body: BodyInit };
 
 const api = {
   get: <T>(url: string, options?: RequestInit) => fetchBase<T>(url, options),
