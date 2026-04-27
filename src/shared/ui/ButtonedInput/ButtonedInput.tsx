@@ -24,6 +24,13 @@ const ButtonedInput: React.FC<ButtonedInputProps> = ({
       }
     }
   };
+
+  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') {
+      handleButtonClick();
+    }
+  };
+
   return (
     <div className="flex">
       <input
@@ -32,6 +39,7 @@ const ButtonedInput: React.FC<ButtonedInputProps> = ({
         ref={inputRef}
         placeholder="Type a message"
         defaultValue={defaultInputValue}
+        onKeyDown={handleInputKeyDown}
       />
       <button onClick={handleButtonClick} disabled={disabled}>
         {buttonText}
