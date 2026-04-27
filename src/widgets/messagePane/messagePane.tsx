@@ -3,6 +3,7 @@ import useStore, { Message } from '../../shared/model/store/store';
 import ButtonedInput from '@/src/shared/ui/ButtonedInput/ButtonedInput';
 import { editMessage } from '@/src/entities/message/api/messageApi';
 import handleError from '@/src/shared/lib/error/error';
+import { dateToFullString, dateToHHMM } from '@/src/shared/ui/date';
 
 const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
   const setContextMenu = useStore((state) => state.setContextMenu);
@@ -11,7 +12,7 @@ const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
   const storeEditedMessage = useStore((state) => state.editMessage);
   const [isSending, setIsSending] = useState(false);
 
-  const createdAt = new Date(message.timeStamp).toLocaleString();
+  const createdAt = new Date(message.timeStamp);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,7 +57,9 @@ const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
         <div>{message.text}</div>
       )}
 
-      <div className="text-sm text-gray-500 mt-auto text-left">{createdAt}</div>
+      <div className="text-sm text-gray-500 self-end w-min" title={dateToFullString(createdAt)}>
+        {dateToHHMM(createdAt)}
+      </div>
     </div>
   );
 };

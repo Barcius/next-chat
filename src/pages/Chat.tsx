@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/shallow';
 import { sendMessage } from '@/src/entities/message/api/messageApi';
 import handleError, { getCustomFetchError, throwOnErrorResponse } from '../shared/lib/error/error';
 import { setMessages } from '../shared/model/store/actions';
+import { dateToFullString, dateToHHMM } from '../shared/ui/date';
 
 const ChatPage: React.FC = () => {
   const {
@@ -70,6 +71,17 @@ const ChatPage: React.FC = () => {
       controller.abort();
     };
   }, []);
+
+  useEffect(() => {
+    if (!messages.length) return;
+    const res = { hhmm: {}, full: {} } as any;
+    messages.forEach((m) => {
+      const date = new Date(m.timeStamp);
+      res.hhmm[m.timeStamp] = dateToHHMM(date);
+      res.full[m.timeStamp] = dateToFullString(date);
+    });
+    console.log(res);
+  }, [messages]);
 
   return (
     <>
