@@ -41,3 +41,5 @@ buttonedInput onButtonClick: (val: string) => Promise<boolean>
 handler returns operation success status
 
 edit store in handlers / entities
+
+chat -> handleButtonClick -> disabled
