@@ -1,17 +1,22 @@
-import React, { useRef, useState } from 'react';
-import useChatStore, { Message } from '../../shared/model/store/store';
+import React, { useState } from 'react';
+import { Message } from '../../shared/model/store/store';
 import ButtonedInput from '@/src/shared/ui/ButtonedInput/ButtonedInput';
 import { editMessage } from '@/src/entities/message/api/messageApi';
-import {
-  setContextMenu,
-  setEditMessageId,
-  editMessage as storeEditMessage,
-} from '../../shared/model/store/actions';
+import { editMessage as storeEditedMessage } from '../../shared/model/store/actions';
 import handleError from '@/src/shared/lib/error/error';
 import { dateToFullString, dateToHHMM } from '@/src/shared/ui/date';
+import { ContextMenuState, EditedMessageIdState } from '@/src/pages/Chat';
 
-const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
-  const editMessageId = useChatStore((state) => state.editMessageId);
+interface Props extends Pick<ContextMenuState, 'setContextMenu'>, EditedMessageIdState {
+  message: Message;
+}
+
+const MessagePane: React.FC<Props> = ({
+  message,
+  setContextMenu,
+  editedMessageId,
+  setEditedMessageId,
+}) => {
   const [isSending, setIsSending] = useState(false);
 
   const createdAt = new Date(message.timeStamp);
@@ -31,8 +36,8 @@ const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
     let success = true;
     try {
       const res = await editMessage(message.id, val);
-      storeEditMessage(res);
-      setEditMessageId(null);
+      storeEditedMessage(res);
+      setEditedMessageId(null);
     } catch (e) {
       handleError(e);
       success = false;
@@ -41,7 +46,7 @@ const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
     return success;
   };
 
-  const isEditing = editMessageId === message.id;
+  const isEditing = editedMessageId === message.id;
 
   return (
     <div

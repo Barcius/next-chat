@@ -1,21 +1,16 @@
 import { deleteMessage } from '@/src/entities/message/api/messageApi';
 import handleError from '@/src/shared/lib/error/error';
-import useChatStore from '@/src/shared/model/store/store';
-import {
-  deleteMessage as storeDeleteMessage,
-  setContextMenu,
-  setEditMessageId,
-} from '@/src/shared/model/store/actions';
+import { deleteMessage as storeDeleteMessage } from '@/src/shared/model/store/actions';
 import React, { useState } from 'react';
+import { ContextMenuState, EditedMessageIdState } from '@/src/pages/Chat';
 
-const ContextMenu: React.FC = () => {
-  const contextMenu = useChatStore((state) => state.contextMenu);
+interface Props extends ContextMenuState, Pick<EditedMessageIdState, 'setEditedMessageId'> {}
+
+const ContextMenu: React.FC<Props> = ({ contextMenu, setContextMenu, setEditedMessageId }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
-  if (!contextMenu.messageId) return null;
-
   const onEdit = () => {
-    if (contextMenu.messageId) setEditMessageId(contextMenu.messageId);
+    if (contextMenu.messageId) setEditedMessageId(contextMenu.messageId);
     setContextMenu(null);
   };
 

@@ -1,15 +1,7 @@
-import useChatStore, { Message, ContextMenuData, initContextMenuData } from './store';
+import useChatStore, { Message } from './store';
 
 export const setMessages = (messages: Message[]) => {
   useChatStore.setState(() => ({ messages }));
-};
-
-export const setEditMessageId = (id: string | null) => {
-  useChatStore.setState({ editMessageId: id });
-};
-
-export const setContextMenu = (data: ContextMenuData | null) => {
-  useChatStore.setState({ contextMenu: data || initContextMenuData });
 };
 
 export const addMessage = (newMessage: Message) => {

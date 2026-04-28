@@ -2,7 +2,7 @@
   "messages": [
     {
       "id": "Ekvt4WCuBRiG4bvvv7_ir",
-      "text": "asdfaf",
+      "text": "asdfafasfdasdf",
       "timeStamp": 1777204664849
     },
     {
@@ -29,11 +29,6 @@
       "id": "solhsxQ3R10",
       "text": "fffff",
       "timeStamp": 1777283951901
-    },
-    {
-      "id": "gyT_9irxXnQ",
-      "text": "fffasdfa",
-      "timeStamp": 1777283954011
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
