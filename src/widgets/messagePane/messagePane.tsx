@@ -1,15 +1,17 @@
 import React, { useRef, useState } from 'react';
-import useStore, { Message } from '../../shared/model/store/store';
+import useChatStore, { Message } from '../../shared/model/store/store';
 import ButtonedInput from '@/src/shared/ui/ButtonedInput/ButtonedInput';
 import { editMessage } from '@/src/entities/message/api/messageApi';
+import {
+  setContextMenu,
+  setEditMessageId,
+  editMessage as storeEditMessage,
+} from '../../shared/model/store/actions';
 import handleError from '@/src/shared/lib/error/error';
 import { dateToFullString, dateToHHMM } from '@/src/shared/ui/date';
 
 const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
-  const setContextMenu = useStore((state) => state.setContextMenu);
-  const editMessageId = useStore((state) => state.editMessageId);
-  const setEditMessageId = useStore((state) => state.setEditMessageId);
-  const storeEditedMessage = useStore((state) => state.editMessage);
+  const editMessageId = useChatStore((state) => state.editMessageId);
   const [isSending, setIsSending] = useState(false);
 
   const createdAt = new Date(message.timeStamp);
@@ -29,7 +31,7 @@ const MessagePane: React.FC<{ message: Message }> = ({ message }) => {
     let success = true;
     try {
       const res = await editMessage(message.id, val);
-      storeEditedMessage(res);
+      storeEditMessage(res);
       setEditMessageId(null);
     } catch (e) {
       handleError(e);

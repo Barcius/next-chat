@@ -1,38 +1,23 @@
 'use client';
 import React, { useEffect, useCallback, useState } from 'react';
-import useStore from '../shared/model/store/store';
+import useChatStore from '../shared/model/store/store';
 import MessagePane from '../widgets/messagePane/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
 import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
-import { useShallow } from 'zustand/shallow';
 import { sendMessage } from '@/src/entities/message/api/messageApi';
 import handleError, { getCustomFetchError, throwOnErrorResponse } from '../shared/lib/error/error';
-import { setMessages } from '../shared/model/store/actions';
-import { dateToFullString, dateToHHMM } from '../shared/ui/date';
+import { setMessages, addMessage, setContextMenu } from '../shared/model/store/actions';
 
 const ChatPage: React.FC = () => {
-  const {
-    messages,
-    storeMessage: addMessage,
-    setContextMenu,
-  } = useStore(
-    useShallow((store) => ({
-      messages: store.messages,
-      storeMessage: store.addMessage,
-      setContextMenu: store.setContextMenu,
-    })),
-  );
+  const messages = useChatStore((store) => store.messages);
   const [isSending, setIsSending] = useState(false);
 
-  const handleOutsideClick = useCallback(
-    (e: MouseEvent) => {
-      const t = e.target as Element;
-      if (!t.closest('.message-pane') && !t.closest('.context-menu')) {
-        setContextMenu(null);
-      }
-    },
-    [setContextMenu],
-  );
+  const handleOutsideClick = useCallback((e: MouseEvent) => {
+    const t = e.target as Element;
+    if (!t.closest('.message-pane') && !t.closest('.context-menu')) {
+      setContextMenu(null);
+    }
+  }, []);
 
   const handleSendMessage = async (val: string) => {
     if (isSending) return false;
@@ -71,17 +56,6 @@ const ChatPage: React.FC = () => {
       controller.abort();
     };
   }, []);
-
-  useEffect(() => {
-    if (!messages.length) return;
-    const res = { hhmm: {}, full: {} } as any;
-    messages.forEach((m) => {
-      const date = new Date(m.timeStamp);
-      res.hhmm[m.timeStamp] = dateToHHMM(date);
-      res.full[m.timeStamp] = dateToFullString(date);
-    });
-    console.log(res);
-  }, [messages]);
 
   return (
     <>

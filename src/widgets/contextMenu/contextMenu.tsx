@@ -1,13 +1,15 @@
 import { deleteMessage } from '@/src/entities/message/api/messageApi';
 import handleError from '@/src/shared/lib/error/error';
-import useStore from '@/src/shared/model/store/store';
+import useChatStore from '@/src/shared/model/store/store';
+import {
+  deleteMessage as storeDeleteMessage,
+  setContextMenu,
+  setEditMessageId,
+} from '@/src/shared/model/store/actions';
 import React, { useState } from 'react';
 
 const ContextMenu: React.FC = () => {
-  const contextMenu = useStore((state) => state.contextMenu);
-  const deleteStoreMessage = useStore((state) => state.deleteMessage);
-  const setContextMenu = useStore((state) => state.setContextMenu);
-  const setEditMessageId = useStore((state) => state.setEditMessageId);
+  const contextMenu = useChatStore((state) => state.contextMenu);
   const [isDeleting, setIsDeleting] = useState(false);
 
   if (!contextMenu.messageId) return null;
@@ -23,7 +25,7 @@ const ContextMenu: React.FC = () => {
       setIsDeleting(true);
       try {
         const res = await deleteMessage(contextMenu.messageId);
-        deleteStoreMessage(res);
+        storeDeleteMessage(res);
         setContextMenu(null);
       } catch (e) {
         handleError(e);
