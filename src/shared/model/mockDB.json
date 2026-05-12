@@ -31,5 +31,12 @@
       "timeStamp": 1777283951901
     }
   ],
+  "users": [
+    {
+      "id": "35xG1meW6nI",
+      "email": "molaanus@gmail.com",
+      "passwordHash": "$2b$12$UoAfzOeYRrOQLaSosGgC6eglDzbz7HfytiI0zOaCtZ34sWjp4sweW"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

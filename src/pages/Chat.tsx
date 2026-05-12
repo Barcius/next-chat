@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import useChatStore from '../shared/model/store/store';
 import MessagePane from '../widgets/messagePane/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
@@ -25,10 +26,17 @@ export interface EditedMessageIdState {
 }
 
 const ChatPage: React.FC = () => {
+  const router = useRouter();
   const messages = useChatStore((store) => store.messages);
   const [isSending, setIsSending] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuData | null>(null);
   const [editedMessageId, setEditedMessageId] = useState<string | null>(null);
+
+  const handleLogout = async () => {
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+    router.push('/login');
+    router.refresh();
+  };
 
   const handleOutsideClick = useCallback((e: MouseEvent) => {
     const t = e.target as Element;
@@ -77,6 +85,14 @@ const ChatPage: React.FC = () => {
 
   return (
     <>
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={handleLogout}
+          className="text-sm px-3 py-1 rounded border hover:bg-gray-100"
+        >
+          Logout
+        </button>
+      </div>
       <div className="flex-1 h-0 overflow-y-auto mb-2">
         {messages.map((message) => (
           <MessagePane

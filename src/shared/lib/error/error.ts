@@ -33,7 +33,7 @@ export function errorToResponse(e: Error) {
   else err = e;
   return NextResponse.json(
     { message: err.message, type: err.type, httpStatus: err.httpStatus },
-    { status: 500 },
+    { status: err.httpStatus ?? 500 },
   );
 }
 
