@@ -5,7 +5,7 @@ import { editMessage } from '@/src/entities/message/api/messageApi';
 import { editMessage as storeEditedMessage } from '../../shared/model/store/actions';
 import handleError from '@/src/shared/lib/error/error';
 import { dateToFullString, dateToHHMM } from '@/src/shared/ui/date';
-import { ContextMenuState, EditedMessageIdState } from '@/src/pages/Chat';
+import { ContextMenuState, EditedMessageIdState } from '@/src/shared/model/types';
 
 interface Props extends Pick<ContextMenuState, 'setContextMenu'>, EditedMessageIdState {
   message: Message;
