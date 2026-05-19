@@ -8,47 +8,29 @@ import { AuthFields } from '../shared/model/types';
 import { authSchema } from '../shared/model/validators';
 import cn from 'classnames';
 import { registerUser } from '../features/auth/api/authApi';
+import useUserStore from '../entities/user/model/userStore';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
+  const setCurrentUser = useUserStore((s) => s.setCurrentUser);
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState: { errors }, clearErrors } = useForm({
     resolver: zodResolver(authSchema)
   });
 
-  // window.se = () => console.log(errors);
-
   const handleRegister = async (form: AuthFields) => {
+    setIsLoading(true);
     try {
-      await registerUser(form);
+      const user = await registerUser(form);
+      setCurrentUser(user);
+      router.push('/');
+      router.refresh();
     } catch (e) {
       handleError(e);
+    } finally {
+      setIsLoading(false);
     }
   }
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  //   const data = new FormData(e.currentTarget);
-  //   try {
-  //     const res = await fetch('/api/auth/register', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({
-  //         email: data.get('email'),
-  //         password: data.get('password'),
-  //       }),
-  //     });
-  //     if (!res.ok) {
-  //       const body = await res.json();
-  //       throw new CustomError(body.message ?? 'Registration failed', body.type ?? 'server', res.status);
-  //     }
-  //     router.push('/');
-  //     router.refresh();
-  //   } catch (e) {
-  //     handleError(e);
-  //   }
-  //   setIsLoading(false);
-  // };
 
   return (
     <div className="flex flex-col items-center justify-center h-full">

@@ -31,5 +31,12 @@
       "timeStamp": 1777283951901
     }
   ],
+  "users": [
+    {
+      "id": "-3LZLjRhzU8",
+      "email": "asdf@asdf.ru",
+      "passwordHash": "$2b$12$QsAf/AFH19xZZ21HLZYq8.ocWrey8z23VJlLijEer87YEvxTNmabq"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
