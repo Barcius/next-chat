@@ -7,8 +7,7 @@ import { useForm } from 'react-hook-form';
 import { AuthFields } from '../shared/model/types';
 import { authSchema } from '../shared/model/validators';
 import cn from 'classnames';
-
-function registerUser(f: AuthFields) { console.log(f) }
+import { registerUser } from '../features/auth/api/authApi';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
@@ -17,7 +16,15 @@ const RegisterPage: React.FC = () => {
     resolver: zodResolver(authSchema)
   });
 
-  window.se = () => console.log(errors);
+  // window.se = () => console.log(errors);
+
+  const handleRegister = async (form: AuthFields) => {
+    try {
+      await registerUser(form);
+    } catch (e) {
+      handleError(e);
+    }
+  }
   // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   //   e.preventDefault();
   //   setIsLoading(true);
@@ -45,7 +52,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <form onSubmit={handleSubmit(registerUser)} className="flex flex-col gap-3 w-80" noValidate>
+      <form onSubmit={handleSubmit(handleRegister)} className="flex flex-col gap-3 w-80" noValidate>
         <h1 className="text-xl font-semibold mb-6">Create account</h1>
         <input
           {...register('email')}

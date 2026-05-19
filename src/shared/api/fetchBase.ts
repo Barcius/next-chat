@@ -13,7 +13,6 @@ export async function fetchBase<T>(path: string, options: RequestInit = {}): Pro
       },
     });
 
-    debugger;
     throwOnErrorResponse(res);
 
     return res.json();

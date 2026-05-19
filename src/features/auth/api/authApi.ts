@@ -14,8 +14,15 @@ export const registerUser = async (newUser: AuthFields) => {
   authSchema.parse(newUser);
   const { email, password } = newUser;
 
-  const existing = await findUserByEmail(email);
-  if (existing) {
+  let doesUserExist;
+  try {
+    doesUserExist = await findUserByEmail(email);
+  } catch (e) {
+    if (!(e instanceof CustomError && e.httpStatus === 404)) {
+      throw e;
+    }
+  }
+  if (doesUserExist) {
     throw new CustomError('Email already registered', 'validation', 409);
   }
 
