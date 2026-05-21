@@ -3,12 +3,10 @@ import { UserBase } from './userTypes';
 
 interface UserState {
   currentUser: UserBase | null;
-  setCurrentUser: (user: UserBase | null) => void;
 }
 
-const useUserStore = create<UserState>((set) => ({
+const useUserStore = create<UserState>(() => ({
   currentUser: null,
-  setCurrentUser: (user) => set({ currentUser: user }),
 }));
 
 export default useUserStore;

@@ -33,9 +33,9 @@
   ],
   "users": [
     {
-      "id": "-3LZLjRhzU8",
+      "id": "XUiFjyqlgxQ",
       "email": "asdf@asdf.ru",
-      "passwordHash": "$2b$12$QsAf/AFH19xZZ21HLZYq8.ocWrey8z23VJlLijEer87YEvxTNmabq"
+      "passwordHash": "$2b$12$b2lLB6o0uvsl590Eo8VLye9707KFtvd8342dLBHu.hfG54SVLuKQ6"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

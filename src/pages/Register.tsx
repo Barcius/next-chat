@@ -1,21 +1,25 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { zodResolver } from "@hookform/resolvers/zod";
-import handleError, { CustomError } from '../shared/lib/error/error';
+import { zodResolver } from '@hookform/resolvers/zod';
+import handleError from '../shared/lib/error/error';
 import { useForm } from 'react-hook-form';
 import { AuthFields } from '../shared/model/types';
 import { authSchema } from '../shared/model/validators';
 import cn from 'classnames';
 import { registerUser } from '../features/auth/api/authApi';
-import useUserStore from '../entities/user/model/userStore';
+import { setCurrentUser } from '@/src/entities/user/model/userActions';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
-  const setCurrentUser = useUserStore((s) => s.setCurrentUser);
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors }, clearErrors } = useForm({
-    resolver: zodResolver(authSchema)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm({
+    resolver: zodResolver(authSchema),
   });
 
   const handleRegister = async (form: AuthFields) => {
@@ -30,7 +34,7 @@ const RegisterPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -42,9 +46,11 @@ const RegisterPage: React.FC = () => {
           placeholder="Email"
           className={cn(
             'border rounded px-3 py-2 text-sm outline-none',
-            errors.email ? 'ring-2 ring-red-400' : 'focus:ring-2 focus:ring-blue-400'
+            errors.email ? 'ring-2 ring-red-400' : 'focus:ring-2 focus:ring-blue-400',
           )}
-          onChange={() => { clearErrors('email') }}
+          onChange={() => {
+            clearErrors('email');
+          }}
         />
         <p className="text-xs text-red-700 whitespace-pre">{errors.email?.message ?? ' '}</p>
         <input
@@ -53,9 +59,11 @@ const RegisterPage: React.FC = () => {
           placeholder="Password"
           className={cn(
             'border rounded px-3 py-2 text-sm outline-none',
-            errors.password ? 'ring-2 ring-red-400' : 'focus:ring-2 focus:ring-blue-400'
+            errors.password ? 'ring-2 ring-red-400' : 'focus:ring-2 focus:ring-blue-400',
           )}
-          onChange={() => { clearErrors('password') }}
+          onChange={() => {
+            clearErrors('password');
+          }}
         />
         <p className="text-xs text-red-700 whitespace-pre">{errors.password?.message ?? ' '}</p>
         <button

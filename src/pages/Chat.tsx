@@ -7,7 +7,7 @@ import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
 import { sendMessage } from '@/src/entities/message/api/messageApi';
 import handleError, { getCustomFetchError, throwOnErrorResponse } from '../shared/lib/error/error';
 import { setMessages, addMessage } from '../shared/model/store/actions';
-import { ContextMenuData } from '@/src/shared/model/types'
+import { ContextMenuData } from '@/src/shared/model/types';
 
 const ChatPage: React.FC = () => {
   const messages = useChatStore((store) => store.messages);

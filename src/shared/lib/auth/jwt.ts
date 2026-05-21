@@ -1,11 +1,9 @@
-import { User } from '@/src/entities/user/model/userTypes';
+import { UserBase } from '@/src/entities/user/model/userTypes';
 import { SignJWT, jwtVerify } from 'jose';
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
-export interface JwtPayload extends Omit<User, 'passwordHash'> {}
-
-export async function signToken(payload: JwtPayload): Promise<string> {
+export async function signToken(payload: UserBase): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -13,7 +11,7 @@ export async function signToken(payload: JwtPayload): Promise<string> {
     .sign(SECRET);
 }
 
-export async function verifyToken(token: string): Promise<JwtPayload> {
-  const { payload } = await jwtVerify<JwtPayload>(token, SECRET);
+export async function verifyToken(token: string): Promise<UserBase> {
+  const { payload } = await jwtVerify<UserBase>(token, SECRET);
   return payload;
 }

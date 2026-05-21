@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { toast } from 'sonner';
 
-export type ErrorType = 'validation' | 'server' | 'network' | 'noop' | 'unknown';
+export type ErrorType = 'validation' | 'server' | 'network' | 'noop' | 'unknown' | 'auth';
 
 export class CustomError extends Error {
   type: string;
