@@ -1,33 +1,25 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 interface ButtonedInputProps {
   buttonText: string;
-  onButtonClick: (val: string) => Promise<boolean>;
-  defaultInputValue?: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 const ButtonedInput: React.FC<ButtonedInputProps> = ({
   buttonText,
-  onButtonClick,
-  defaultInputValue,
+  value,
+  onChange,
+  onSubmit,
   disabled,
+  placeholder = 'Type a message',
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleButtonClick = async () => {
-    if (inputRef?.current) {
-      const val = inputRef.current.value.trim();
-      if (val) {
-        const res = await onButtonClick(val);
-        if (res && inputRef.current) inputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
-      handleButtonClick();
+      onSubmit();
     }
   };
 
@@ -36,12 +28,12 @@ const ButtonedInput: React.FC<ButtonedInputProps> = ({
       <input
         className="flex-1 mr-2 p-2"
         type="text"
-        ref={inputRef}
-        placeholder="Type a message"
-        defaultValue={defaultInputValue}
-        onKeyDown={handleInputKeyDown}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
-      <button onClick={handleButtonClick} disabled={disabled}>
+      <button onClick={onSubmit} disabled={disabled}>
         {buttonText}
       </button>
     </div>

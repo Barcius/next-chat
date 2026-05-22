@@ -2,15 +2,36 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ButtonedInput from '@/src/shared/ui/ButtonedInput/ButtonedInput';
 
-it('does nothing on button click when the input is empty', async () => {
-  const mockHandleClick = jest.fn();
-
-  render(<ButtonedInput onButtonClick={mockHandleClick} buttonText="asdf" />);
-
-  const button = screen.getByRole('button', { name: 'asdf' });
+it('calls onSubmit when button is clicked', async () => {
+  const mockHandleSubmit = jest.fn();
   const user = userEvent.setup();
 
+  render(
+    <ButtonedInput
+      buttonText="asdf"
+      value="hello"
+      onChange={() => {}}
+      onSubmit={mockHandleSubmit}
+    />,
+  );
+
+  const button = screen.getByRole('button', { name: 'asdf' });
   await user.click(button);
 
-  expect(mockHandleClick).not.toHaveBeenCalled();
+  expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+});
+
+it('calls onChange when typing', async () => {
+  const mockHandleChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <ButtonedInput buttonText="asdf" value="" onChange={mockHandleChange} onSubmit={() => {}} />,
+  );
+
+  const input = screen.getByRole('textbox');
+  await user.type(input, 'hello');
+
+  expect(mockHandleChange).toHaveBeenCalledTimes(5);
+  expect(mockHandleChange).toHaveBeenLastCalledWith('hello');
 });

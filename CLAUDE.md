@@ -41,15 +41,16 @@ src/
 **State:** Zustand store in `src/shared/model/store/store.ts`. Actions are plain functions calling `setState` — no thunks or middleware. All async logic lives in `Chat.tsx` or `messageApi.ts`.
 
 **Message model:**
+
 ```typescript
 interface Message {
-  id: string;        // nanoid
+  id: string; // nanoid
   text: string;
   timeStamp: number; // ms since epoch
 }
 ```
 
-**ButtonedInput:** takes a `() => Promise<boolean>` callback; clears input on `true`, supports Enter key, accepts `defaultInputValue` for edit mode.
+**ButtonedInput:** controlled input component with `value`, `onChange`, `onSubmit` props; supports Enter key to submit.
 
 **Error handling:** `CustomError` class in `src/shared/lib/error/error.ts` with typed kinds: `'validation'`, `'server'`, `'network'`, `'noop'`, `'unknown'`.
 
@@ -65,13 +66,13 @@ interface Message {
 
 ## Key files
 
-| Purpose | Path |
-|---|---|
-| Main page component | `src/pages/Chat.tsx` |
-| Zustand store | `src/shared/model/store/store.ts` |
-| Fetch client | `src/shared/api/fetchBase.ts` |
-| Message API | `src/entities/message/api/messageApi.ts` |
-| Error class | `src/shared/lib/error/error.ts` |
-| Input component | `src/shared/ui/ButtonedInput/ButtonedInput.tsx` |
-| Message widget | `src/widgets/messagePane/messagePane.tsx` |
-| Context menu | `src/widgets/contextMenu/contextMenu.tsx` |
+| Purpose             | Path                                            |
+| ------------------- | ----------------------------------------------- |
+| Main page component | `src/pages/Chat.tsx`                            |
+| Zustand store       | `src/shared/model/store/store.ts`               |
+| Fetch client        | `src/shared/api/fetchBase.ts`                   |
+| Message API         | `src/entities/message/api/messageApi.ts`        |
+| Error class         | `src/shared/lib/error/error.ts`                 |
+| Input component     | `src/shared/ui/ButtonedInput/ButtonedInput.tsx` |
+| Message widget      | `src/widgets/messagePane/messagePane.tsx`       |
+| Context menu        | `src/widgets/contextMenu/contextMenu.tsx`       |

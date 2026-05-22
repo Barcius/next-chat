@@ -11,6 +11,7 @@ import { ContextMenuData } from '@/src/shared/model/types';
 
 const ChatPage: React.FC = () => {
   const messages = useChatStore((store) => store.messages);
+  const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuData | null>(null);
   const [editedMessageId, setEditedMessageId] = useState<string | null>(null);
@@ -22,19 +23,21 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
-  const handleSendMessage = async (val: string) => {
-    if (isSending) return false;
+  const handleSendMessage = async () => {
+    if (isSending) return;
+    const trimmed = messageText.trim();
+    if (!trimmed) return;
     setIsSending(true);
-    let success = true;
     try {
-      const res = await sendMessage(val);
+      const res = await sendMessage(trimmed);
       addMessage(res);
+      setMessageText('');
     } catch (e) {
       handleError(e);
-      success = false;
+      // Keep the text so user can retry
+    } finally {
+      setIsSending(false);
     }
-    setIsSending(false);
-    return success;
   };
 
   useEffect(() => {
@@ -73,7 +76,13 @@ const ChatPage: React.FC = () => {
           />
         ))}
       </div>
-      <ButtonedInput buttonText="Send" onButtonClick={handleSendMessage} disabled={isSending} />
+      <ButtonedInput
+        buttonText="Send"
+        value={messageText}
+        onChange={setMessageText}
+        onSubmit={handleSendMessage}
+        disabled={isSending}
+      />
       {contextMenu && (
         <ContextMenu
           contextMenu={contextMenu}
