@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import { authPaths } from './shared/lib/auth/paths';
-
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+import { jwtSecret } from './shared/lib/auth/jwt';
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -18,7 +17,7 @@ export async function proxy(req: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, SECRET);
+    await jwtVerify(token, jwtSecret);
     return NextResponse.next();
   } catch {
     const response = NextResponse.redirect(new URL('/login', req.url));
