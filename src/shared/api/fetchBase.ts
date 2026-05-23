@@ -1,5 +1,4 @@
-// const BASE_URL = 'https://molaanus.lightboxapi.ru'; // 'https://jsonplaceholder.typicode.com';
-const BASE_URL = 'http://localhost:4000';
+const { BASE_URL } = process.env;
 
 import { getCustomFetchError, throwOnErrorResponse } from '../lib/error/error';
 
@@ -13,7 +12,6 @@ export async function fetchBase<T>(path: string, options: RequestInit = {}): Pro
       },
     });
 
-    debugger;
     throwOnErrorResponse(res);
 
     return res.json();

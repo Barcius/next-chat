@@ -1,31 +1,21 @@
 'use client';
 import React, { useEffect, useCallback, useState } from 'react';
-import useChatStore from '../shared/model/store/store';
+import useChatStore, { Message } from '../shared/model/store/store';
 import MessagePane from '../widgets/messagePane/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
 import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
 import { sendMessage } from '@/src/entities/message/api/messageApi';
 import handleError, { getCustomFetchError, throwOnErrorResponse } from '../shared/lib/error/error';
 import { setMessages, addMessage } from '../shared/model/store/actions';
+import { ContextMenuData } from '@/src/shared/model/types';
 
-interface ContextMenuData {
-  messageId: string;
-  x: number;
-  y: number;
+interface Props {
+  initialMessages: Message[];
 }
 
-export interface ContextMenuState {
-  contextMenu: ContextMenuData;
-  setContextMenu: (data: ContextMenuData | null) => void;
-}
-
-export interface EditedMessageIdState {
-  editedMessageId: string | null;
-  setEditedMessageId: (id: string | null) => void;
-}
-
-const ChatPage: React.FC = () => {
+const ChatPage: React.FC<Props> = ({ initialMessages }) => {
   const messages = useChatStore((store) => store.messages);
+  const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuData | null>(null);
   const [editedMessageId, setEditedMessageId] = useState<string | null>(null);
@@ -37,19 +27,21 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
-  const handleSendMessage = async (val: string) => {
-    if (isSending) return false;
+  const handleSendMessage = async () => {
+    if (isSending) return;
+    const trimmed = messageText.trim();
+    if (!trimmed) return;
     setIsSending(true);
-    let success = true;
     try {
-      const res = await sendMessage(val);
+      const res = await sendMessage(trimmed);
       addMessage(res);
+      setMessageText('');
     } catch (e) {
       handleError(e);
-      success = false;
+      // Keep the text so user can retry
+    } finally {
+      setIsSending(false);
     }
-    setIsSending(false);
-    return success;
   };
 
   useEffect(() => {
@@ -60,20 +52,8 @@ const ChatPage: React.FC = () => {
   }, [handleOutsideClick]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    (async () => {
-      try {
-        const res = await fetch('/api/messages', { signal: controller.signal });
-        throwOnErrorResponse(res);
-        setMessages(await res.json());
-      } catch (e) {
-        handleError(getCustomFetchError(e));
-      }
-    })();
-    return () => {
-      controller.abort();
-    };
-  }, []);
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   return (
     <>
@@ -88,7 +68,13 @@ const ChatPage: React.FC = () => {
           />
         ))}
       </div>
-      <ButtonedInput buttonText="Send" onButtonClick={handleSendMessage} disabled={isSending} />
+      <ButtonedInput
+        buttonText="Send"
+        value={messageText}
+        onChange={setMessageText}
+        onSubmit={handleSendMessage}
+        disabled={isSending}
+      />
       {contextMenu && (
         <ContextMenu
           contextMenu={contextMenu}

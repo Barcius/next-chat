@@ -5,7 +5,7 @@ import { editMessage } from '@/src/entities/message/api/messageApi';
 import { editMessage as storeEditedMessage } from '../../shared/model/store/actions';
 import handleError from '@/src/shared/lib/error/error';
 import { dateToFullString, dateToHHMM } from '@/src/shared/ui/date';
-import { ContextMenuState, EditedMessageIdState } from '@/src/pages/Chat';
+import { ContextMenuState, EditedMessageIdState } from '@/src/shared/model/types';
 
 interface Props extends Pick<ContextMenuState, 'setContextMenu'>, EditedMessageIdState {
   message: Message;
@@ -17,6 +17,7 @@ const MessagePane: React.FC<Props> = ({
   editedMessageId,
   setEditedMessageId,
 }) => {
+  const [editText, setEditText] = useState(message.text);
   const [isSending, setIsSending] = useState(false);
 
   const createdAt = new Date(message.timeStamp);
@@ -30,20 +31,22 @@ const MessagePane: React.FC<Props> = ({
     });
   };
 
-  const handleEditMessage = async (val: string) => {
-    if (isSending) return false;
+  const handleEditMessage = async () => {
+    if (isSending) return;
+    const trimmed = editText.trim();
+    if (!trimmed) return;
     setIsSending(true);
-    let success = true;
     try {
-      const res = await editMessage(message.id, val);
+      const res = await editMessage(message.id, trimmed);
       storeEditedMessage(res);
       setEditedMessageId(null);
+      setEditText('');
     } catch (e) {
       handleError(e);
-      success = false;
+      // Keep the text so user can retry
+    } finally {
+      setIsSending(false);
     }
-    setIsSending(false);
-    return success;
   };
 
   const isEditing = editedMessageId === message.id;
@@ -56,8 +59,9 @@ const MessagePane: React.FC<Props> = ({
       {isEditing ? (
         <ButtonedInput
           buttonText="Save"
-          defaultInputValue={message.text}
-          onButtonClick={handleEditMessage}
+          value={editText}
+          onChange={setEditText}
+          onSubmit={handleEditMessage}
           disabled={isSending}
         />
       ) : (

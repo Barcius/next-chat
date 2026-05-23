@@ -2,7 +2,7 @@ import { deleteMessage } from '@/src/entities/message/api/messageApi';
 import handleError from '@/src/shared/lib/error/error';
 import { deleteMessage as storeDeleteMessage } from '@/src/shared/model/store/actions';
 import React, { useState } from 'react';
-import { ContextMenuState, EditedMessageIdState } from '@/src/pages/Chat';
+import { ContextMenuState, EditedMessageIdState } from '@/src/shared/model/types';
 
 interface Props extends ContextMenuState, Pick<EditedMessageIdState, 'setEditedMessageId'> {}
 
