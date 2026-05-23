@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { toast } from 'sonner';
+import { getRouter } from '../router';
 
 export type ErrorType = 'validation' | 'server' | 'network' | 'noop' | 'unknown' | 'auth';
 
@@ -54,9 +55,9 @@ export function throwOnErrorResponse(res: Response) {
 }
 
 const handleError = (e: unknown) => {
-  if (e instanceof CustomError && e.type === 'noop') {
-    // toast('noop');
-    return;
+  if (e instanceof CustomError) {
+    if (e.type === 'noop') return;
+    if (e.httpStatus === 401) getRouter()?.push('/login');
   }
   const msg = e instanceof Error ? e.message : String(e);
   toast.error(msg);

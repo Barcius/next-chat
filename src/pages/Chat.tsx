@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useCallback, useState } from 'react';
-import useChatStore from '../shared/model/store/store';
+import useChatStore, { Message } from '../shared/model/store/store';
 import MessagePane from '../widgets/messagePane/messagePane';
 import ContextMenu from '../widgets/contextMenu/contextMenu';
 import ButtonedInput from '../shared/ui/ButtonedInput/ButtonedInput';
@@ -9,7 +9,11 @@ import handleError, { getCustomFetchError, throwOnErrorResponse } from '../share
 import { setMessages, addMessage } from '../shared/model/store/actions';
 import { ContextMenuData } from '@/src/shared/model/types';
 
-const ChatPage: React.FC = () => {
+interface Props {
+  initialMessages: Message[];
+}
+
+const ChatPage: React.FC<Props> = ({ initialMessages }) => {
   const messages = useChatStore((store) => store.messages);
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -48,20 +52,8 @@ const ChatPage: React.FC = () => {
   }, [handleOutsideClick]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    (async () => {
-      try {
-        const res = await fetch('/api/messages', { signal: controller.signal });
-        throwOnErrorResponse(res);
-        setMessages(await res.json());
-      } catch (e) {
-        handleError(getCustomFetchError(e));
-      }
-    })();
-    return () => {
-      controller.abort();
-    };
-  }, []);
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   return (
     <>
